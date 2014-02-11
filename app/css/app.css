@@ -4,3 +4,10 @@
     font-size: 2em;
     padding: 1em;
 }
+
+.game-controls button {
+    display: block;
+    width: 100%;
+    font-size: 2em;
+    padding: 1em;
+}

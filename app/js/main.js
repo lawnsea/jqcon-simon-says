@@ -3,14 +3,24 @@ require.config({
 });
 
 require([
-  'game-board'
+  'game'
 ],
 function (
-  GameBoard
+  Game
 ) {
-  GameBoard.attachTo('.game-board');
+  $(function () {
+    Game.attachTo(document);
 
-  $(document).on('activation', function (e) {
-    console.log($(e.target).data('color'));
+    $(document).on('activation', function (e, data) {
+      console.log(data.color);
+    });
+
+    $(document).on('success', function () {
+      console.log('success');
+    });
+
+    $(document).on('failure', function (e, data) {
+      console.log('expected', data.expected, 'but saw', data.actual);
+    });
   });
 });

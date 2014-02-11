@@ -1,10 +1,12 @@
 define([
   'flight/component',
-  'game-board'
+  'game-board',
+  'alert'
 ],
 function (
   defineComponent,
-  GameBoard
+  GameBoard,
+  Alert
 ) {
   'use strict';
 
@@ -42,6 +44,9 @@ function (
         setTimeout(this.emitSequence.bind(this), this.attr.delay);
       } else {
         this.expectedSequence.reverse();
+        setTimeout(this.trigger.bind(this, 'alert', {
+          message: 'Go!'
+        }), this.attr.delay);
         this.attr.state = state.LISTENING;
       }
     };
@@ -85,16 +90,35 @@ function (
 
     this.onSuccess = function () {
       this.attr.level++;
+
+      this.trigger('alert', {
+        message: 'Correct!',
+        color: 'green',
+        duration: 750
+      });
+    };
+
+    this.onFailure = function (e, data) {
+      this.trigger('alert', {
+        message: 'Wrong!\n' +
+          'Expected\n' +
+          data.expected[0].toUpperCase() +
+          data.expected.slice(1),
+        color: 'red',
+        duration: 1000
+      });
     };
 
     this.after('initialize', function () {
       GameBoard.attachTo(this.$node.find(this.attr.gameBoardSelector), {
         colors: this.attr.colors.slice()
       });
+      Alert.attachTo('.alert');
 
       this.on('.game-controls .start', 'click', this.onStartClick);
       this.on('activation', this.onActivation);
       this.on('success', this.onSuccess);
+      this.on('failure', this.onFailure);
     });
   }
 

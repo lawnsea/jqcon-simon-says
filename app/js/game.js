@@ -27,7 +27,10 @@ function (
       sequence: [],
       expectedSequence: [],
       delay: 1000,
-      level: 3,
+      level: 1,
+      levelDelta: 2,
+      startButtonSelector: '.game-controls .start',
+      levelSelector: '.game-controls .level',
       state: state.WAITING
     });
 
@@ -58,8 +61,9 @@ function (
         return;
       }
 
+      var len = this.attr.level + this.attr.levelDelta;
       this.expectedSequence = [];
-      for (var i = 0; i < this.attr.level; i++) {
+      for (var i = 0; i < len; i++) {
         this.attr.sequence.push(Math.floor(Math.random() * numColors));
       }
 
@@ -89,7 +93,7 @@ function (
     };
 
     this.onSuccess = function () {
-      this.attr.level++;
+      this.setLevel(this.attr.level + 1);
 
       this.trigger('alert', {
         message: 'Correct!',
@@ -109,16 +113,23 @@ function (
       });
     };
 
+    this.setLevel = function (level) {
+      this.attr.level = level;
+      this.$node.find(this.attr.levelSelector).text('Level ' + level);
+    };
+
     this.after('initialize', function () {
       GameBoard.attachTo(this.$node.find(this.attr.gameBoardSelector), {
         colors: this.attr.colors.slice()
       });
       Alert.attachTo('.alert');
 
-      this.on('.game-controls .start', 'click', this.onStartClick);
+      this.on(this.attr.startButtonSelector, 'click', this.onStartClick);
       this.on('activation', this.onActivation);
       this.on('success', this.onSuccess);
       this.on('failure', this.onFailure);
+
+      this.setLevel(this.attr.level);
     });
   }
 

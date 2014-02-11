@@ -12,6 +12,13 @@
     padding: 1em;
 }
 
+.game-controls .level {
+    padding: 1em;
+    font-size: 2em;
+    background: rgba(0,0,0,0.5);
+    text-align: center;
+}
+
 .alert {
     position: absolute;
     top: 50%;

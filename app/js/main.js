@@ -3,12 +3,12 @@ require.config({
 });
 
 require([
-  'button'
+  'game-board'
 ],
 function (
-  Button
+  GameBoard
 ) {
-  Button.attachTo('.game-board button');
+  GameBoard.attachTo('.game-board');
 
   $(document).on('activation', function (e) {
     console.log($(e.target).data('color'));

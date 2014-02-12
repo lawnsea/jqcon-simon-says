@@ -23,6 +23,18 @@ function (
         colors: this.attr.colors.slice()
       });
       Alert.attachTo('.alert');
+
+      var startClicks =
+        this.$node.find(this.attr.startButtonSelector).
+        asEventStream('click').
+        map('start');
+      startClicks.log('startClicks');
+
+      var activations =
+        $(document).asEventStream('activation', function (e, data) {
+          return data.color;
+        });
+      activations.log('activations');
     });
   }
 

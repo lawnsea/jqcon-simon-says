@@ -32,7 +32,10 @@ function (
 
       var activations =
         $(document).asEventStream('activation', function (e, data) {
-          return data.color;
+          return e.target !== this.node ? data.color : null;
+        }.bind(this)).
+        filter(function (val) {
+          return val !== null;
         });
       activations.log('activations');
     });

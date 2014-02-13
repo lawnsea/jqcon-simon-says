@@ -111,7 +111,19 @@ function (
           return {
             color: color
           };
-        }).onValue(this, 'trigger', 'activation');
+        }).
+        onValue(this, 'trigger', 'activation');
+
+      gameState.
+        filter(function (e) {
+          return e.what === 'start';
+        }).
+        map(function (e) {
+          return {
+            message: 'Go!'
+          };
+        }).
+        onValue(this, 'trigger', 'alert');
 
       var wins = gameState.
         filter(function (e) {

@@ -22,6 +22,8 @@ function (
     });
 
     this.after('initialize', function () {
+      var level = this.attr.level;
+
       GameBoard.attachTo(this.$node.find(this.attr.gameBoardSelector), {
         colors: this.attr.colors.slice()
       });
@@ -62,9 +64,8 @@ function (
             case 'start':
               if (state.length < 1) {
                 // start a new sequence
-                state = randomSample(
-                  this.attr.level + this.attr.levelDelta,
-                  this.attr.colors);
+                state =
+                  randomSample(level + this.attr.levelDelta, this.attr.colors);
 
                 events.push(new Bacon.Next({
                   what: 'start',
@@ -111,6 +112,35 @@ function (
             color: color
           };
         }).onValue(this, 'trigger', 'activation');
+
+      var wins = gameState.
+        filter(function (e) {
+          return e.what === 'win';
+        }).
+        map({
+          message: 'Correct!',
+          color: 'green'
+        });
+
+      wins.onValue(this, 'trigger', 'alert');
+      wins.onValue(function () {
+        level++;
+
+        this.$node.find(this.attr.levelSelector).text('Level ' + level);
+      }.bind(this));
+
+      gameState.
+        filter(function (e) {
+          return e.what === 'lose';
+        }).
+        map(function (e) {
+          return {
+            message: 'Wrong.\nExpected\n' + e.data.expected,
+            color: 'red',
+            duration: 1000
+          };
+        }).
+        onValue(this, 'trigger', 'alert');
 
       gameState.log();
     });
